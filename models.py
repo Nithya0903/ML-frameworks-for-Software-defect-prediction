@@ -53,5 +53,47 @@ def rf(X_train,y_train,X_test):
     y_pred = classifier.predict(X_test)
     return y_pred
 
+def nn(X_train,y_train,X_test):
+    from sklearn.neural_network import MLPClassifier
+    param_grid = [
+        {
+            'activation' : ['identity', 'logistic', 'tanh', 'relu'],
+            'solver' : ['sgd', 'adam'],
+            'hidden_layer_sizes': [
+             (1,),(2,),(3,),(4,),(5,),(6,),(7,),(8,),(9,),(10,),(11,), (12,),(13,),(14,),(15,),(16,),(17,),(18,),(19,),(20,)
+             ]
+        }
+       ]
+    n = MLPClassifier(random_state=0)
+    #classifier = findbestestimator(param_grid,n,X_train,y_train)
+    classifier = MLPClassifier(hidden_layer_sizes=(19,),activation='relu',solver='adam',random_state = 0)
+    classifier.fit(X_train, y_train)
+    # Predicting the Test set results
+    y_pred = classifier.predict(X_test)
+    return y_pred
 
+def svm(X_train,y_train,X_test):
+    from sklearn.svm import SVC
+    param_grid = {'C': [0.1, 1, 10, 100, 1000],  
+              'gamma': [1, 0.1, 0.01, 0.001, 0.0001], 
+              'kernel': ['rbf']}
+    s=  SVC(random_state=0)
+    #classifier = findbestestimator(param_grid,s,X_train,y_train)
+    classifier = SVC(C=1,gamma=1,kernel='rbf',random_state=0)
+    classifier.fit(X_train, y_train)
+    y_pred = classifier.predict(X_test)
+    return y_pred
+
+def pca(X_train,y_train):
+    from sklearn.decomposition import PCA
+    pca = PCA(n_components = 21)
+    X_train1 = pca.fit_transform(X_train)
+    X_test1 = pca.transform(X_test)
+    explained_variance = pca.explained_variance_ratio_
+    print("explained variance {}".format(explained_variance))
+
+    var1=np.cumsum(np.round(pca.explained_variance_ratio_, decimals=4)*100)
+    print(var1)
+    plt.plot(var1)
+    plt.show()
     
