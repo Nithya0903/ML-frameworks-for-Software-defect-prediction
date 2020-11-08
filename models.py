@@ -7,8 +7,32 @@ def findbestestimator(param_grid,estimator,X,y,k=5):
     print(clf.best_params_)
     return clf
 
+def findBestNoOfComponents(X_train):
+    import numpy as np
+    import matplotlib.pyplot as plt
+    from sklearn.decomposition import PCA
+    pca = PCA(n_components = len(X_train[0]))
+    X_train1 = pca.fit_transform(X_train)
+    explained_variance = pca.explained_variance_ratio_
+    #print("explained variance {}".format(explained_variance))
+    var1=np.cumsum(np.round(pca.explained_variance_ratio_, decimals=4)*100)
+    print("Min no of components to retain 95% variance:")
+    n_chosen = len(var1)+1
+    for i in range(len(var1)):
+        if var1[i]>=99.95:
+            n_chosen=i+1
+            break
+
+    
+    plt.plot(var1)
+    plt.title('Varaince against no of components')
+    plt.savefig("figures/pca-choosing-n")
+    print(n_chosen)
+    return n_chosen
+
 
 def xgb(X_train,y_train,X_test):
+    print("XGB")
     # Fitting XGB-Classifier to the training set
     from xgboost import XGBClassifier
     xgb=XGBClassifier()
@@ -20,17 +44,15 @@ def xgb(X_train,y_train,X_test):
         'max_depth': [3, 4, 5]
         }
     
-    #classifier = findbestestimator(param_grid,xgb,X_train,y_train)
-    
-    
-    
-    classifier = XGBClassifier(colsample_bytree=0.8,gamma=5, max_depth= 4, min_child_weight= 1, subsample= 0.6)
+    #classifier = findbestestimator(param_grid,xgb,X_train,y_train) 
+    classifier = XGBClassifier(colsample_bytree=1,gamma=2, max_depth= 5, min_child_weight= 5, subsample=1)
     classifier.fit(X_train, y_train)
     # Predicting the Test set results
     y_pred = classifier.predict(X_test)
     return y_pred
 
 def rf(X_train,y_train,X_test):
+    print("rf")
     from sklearn.ensemble import RandomForestClassifier
     rf = RandomForestClassifier()
     param_grid = {
@@ -41,19 +63,16 @@ def rf(X_train,y_train,X_test):
     'min_samples_split': [8, 10, 12],
     'n_estimators': [100, 200, 300, 400, 500, 800, 1000]
     }
-    '''
-    classifier = findbestestimator(param_grid,rf,X_train,y_train)
-    
-    '''
-    classifier = RandomForestClassifier(bootstrap=True, max_depth=80, max_features=2, min_samples_leaf=3, min_samples_split=8,n_estimators=200,random_state = 0)
+    #classifier = findbestestimator(param_grid,rf,X_train,y_train)
+    classifier = RandomForestClassifier(bootstrap=True, max_depth=90, max_features=2, min_samples_leaf=3, min_samples_split=10,n_estimators=400)
     classifier.fit(X_train, y_train)
     #To quickly classify
-    
     # Predicting the Test set results
     y_pred = classifier.predict(X_test)
     return y_pred
 
 def nn(X_train,y_train,X_test):
+    print("NN")
     from sklearn.neural_network import MLPClassifier
     param_grid = [
         {
@@ -64,36 +83,39 @@ def nn(X_train,y_train,X_test):
              ]
         }
        ]
-    n = MLPClassifier(random_state=0)
+    #n = MLPClassifier(random_state=0)
     #classifier = findbestestimator(param_grid,n,X_train,y_train)
-    classifier = MLPClassifier(hidden_layer_sizes=(19,),activation='relu',solver='adam',random_state = 0)
+    classifier = MLPClassifier(hidden_layer_sizes=(11,),activation='relu',solver='adam',random_state = 0)
     classifier.fit(X_train, y_train)
     # Predicting the Test set results
     y_pred = classifier.predict(X_test)
-    return y_pred
+    return (y_pred)
 
 def svm(X_train,y_train,X_test):
+    print("SVM")
     from sklearn.svm import SVC
-    param_grid = {'C': [0.1, 1, 10, 100, 1000],  
-              'gamma': [1, 0.1, 0.01, 0.001, 0.0001], 
-              'kernel': ['rbf']}
-    s=  SVC(random_state=0)
+    # param_grid = {'C': [0.1, 1, 10, 100, 1000],  
+    #           'gamma': [1, 0.1, 0.01, 0.001, 0.0001], 
+    #           'kernel': ['rbf']}
+    param_grid = [
+    {'C': [1, 10, 100, 1000], 'kernel': ['linear']},
+    {'C': [1, 10, 100, 1000], 'gamma': [0.001, 0.0001], 'kernel': ['rbf']},
+    ]
+    #s=  SVC(random_state=0)
     #classifier = findbestestimator(param_grid,s,X_train,y_train)
-    classifier = SVC(C=1,gamma=1,kernel='rbf',random_state=0)
+    #classifier = SVC(C=100,gamma=0.1,kernel='rbf',random_state=0)
+    classifier = SVC(C=10,kernel='linear')
     classifier.fit(X_train, y_train)
     y_pred = classifier.predict(X_test)
-    return y_pred
+    return (y_pred)
 
-def pca(X_train,y_train):
-    from sklearn.decomposition import PCA
-    pca = PCA(n_components = 21)
-    X_train1 = pca.fit_transform(X_train)
-    X_test1 = pca.transform(X_test)
-    explained_variance = pca.explained_variance_ratio_
-    print("explained variance {}".format(explained_variance))
-
-    var1=np.cumsum(np.round(pca.explained_variance_ratio_, decimals=4)*100)
-    print(var1)
-    plt.plot(var1)
-    plt.show()
+def pca(X_train,X_test):
+  from sklearn.decomposition import PCA
+  n = findBestNoOfComponents(X_train)
+  pca = PCA(n_components = n)
+  X_train = pca.fit_transform(X_train)
+  X_test = pca.transform(X_test)
+  return (X_train,X_test)
+  
+  
     
