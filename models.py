@@ -50,9 +50,9 @@ def xgb(X_train,y_train,X_test):
         'max_depth': [3, 4, 5]
         }
     
-    classifier = findbestestimator(param_grid,xgb,X_train,y_train) 
-    #classifier = XGBClassifier(colsample_bytree=1,gamma=0.5, max_depth= 5, min_child_weight= 1, subsample=0.8)
-    #classifier.fit(X_train, y_train)
+    #classifier = findbestestimator(param_grid,xgb,X_train,y_train) 
+    classifier = XGBClassifier(colsample_bytree=0.8,gamma=5, max_depth= 4, min_child_weight= 1, subsample=0.6)
+    classifier.fit(X_train, y_train)
     # Predicting the Test set results
     y_pred = classifier.predict(X_test)
     return y_pred
@@ -69,9 +69,9 @@ def rf(X_train,y_train,X_test):
     'min_samples_split': [8, 10, 12],
     'n_estimators': [100, 200, 300, 400, 500, 800, 1000]
     }
-    classifier = findbestestimator(param_grid,rf,X_train,y_train)
-    #classifier = RandomForestClassifier(bootstrap=True, max_depth=80, max_features=3, min_samples_leaf=3, min_samples_split=8,n_estimators=100)
-    #classifier.fit(X_train, y_train)
+    #classifier = findbestestimator(param_grid,rf,X_train,y_train)
+    classifier = RandomForestClassifier(bootstrap=True, max_depth=80, max_features=3, min_samples_leaf=3, min_samples_split=8,n_estimators=100)
+    classifier.fit(X_train, y_train)
     #To quickly classify
     # Predicting the Test set results
     y_pred = classifier.predict(X_test)
@@ -89,10 +89,10 @@ def nn(X_train,y_train,X_test):
              ]
         }
        ]
-    n = MLPClassifier(random_state=0)
-    classifier = findbestestimator(param_grid,n,X_train,y_train)
-    #classifier = MLPClassifier(hidden_layer_sizes=(15,),activation='relu',solver='adam',random_state = 0)
-    #classifier.fit(X_train, y_train)
+    #n = MLPClassifier(random_state=0)
+    #classifier = findbestestimator(param_grid,n,X_train,y_train)
+    classifier = MLPClassifier(hidden_layer_sizes=(15,),activation='relu',solver='adam',random_state = 0)
+    classifier.fit(X_train, y_train)
     # Predicting the Test set results
     y_pred = classifier.predict(X_test)
     return (y_pred)
@@ -107,11 +107,11 @@ def svm(X_train,y_train,X_test):
     {'C': [1, 10, 100, 1000], 'kernel': ['linear']},
     {'C': [1, 10, 100, 1000], 'gamma': [0.001, 0.0001], 'kernel': ['rbf']},
     ]
-    s=  SVC(random_state=0)
-    classifier = findbestestimator(param_grid,s,X_train,y_train)
-    #classifier = SVC(C=1000,gamma=0.001,kernel='rbf',random_state=0)
+    #s=  SVC(random_state=0)
+    #classifier = findbestestimator(param_grid,s,X_train,y_train)
+    classifier = SVC(C=1000,gamma=0.001,kernel='rbf',random_state=0)
     #classifier = SVC(C=10,kernel='linear')
-    #classifier.fit(X_train, y_train)
+    classifier.fit(X_train, y_train)
     y_pred = classifier.predict(X_test)
     return (y_pred)
 
