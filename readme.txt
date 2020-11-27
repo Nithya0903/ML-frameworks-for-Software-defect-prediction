@@ -1,3 +1,5 @@
+ TO RUN:
+ 
  Download all the python files,and  datasets into the data directory.
  To run the models execute the command python final.py /datasetname
  For hyperparameter tuning, uncomment gridsearch in models.py
