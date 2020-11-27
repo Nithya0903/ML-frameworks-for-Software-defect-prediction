@@ -91,7 +91,7 @@ def nn(X_train,y_train,X_test):
        ]
     #n = MLPClassifier(random_state=0)
     #classifier = findbestestimator(param_grid,n,X_train,y_train)
-    classifier = MLPClassifier(hidden_layer_sizes=(15,),activation='relu',solver='adam',random_state = 0)
+    classifier = MLPClassifier(hidden_layer_sizes=(19,),activation='relu',solver='adam',random_state = 0)
     classifier.fit(X_train, y_train)
     # Predicting the Test set results
     y_pred = classifier.predict(X_test)

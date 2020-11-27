@@ -22,11 +22,17 @@ def runAllModels(X_train,X_test,y_test,y_train):
 
 def main():
     import pandas as pd
-    X_train,X_test,y_test,y_train =preprocess(sys.argv[1])    
-    #runAllModels(X_train,X_test,y_test,y_train)
-    #X_train,X_test= pca(X_train,X_test)
-    #X_train,X_test= kpca(X_train,X_test)
-    #X_train,X_test=info_gain(X_train,X_test,y_train)
+    X_train,X_test,y_test,y_train =preprocess(sys.argv[1])  
+    print("Models without fs")  
+    runAllModels(X_train,X_test,y_test,y_train)
+    print("Models with pca")  
+    X_train,X_test= pca(X_train,X_test)
+    runAllModels(X_train,X_test,y_test,y_train)
+    print("Models with kpca")  
+    X_train,X_test= kpca(X_train,X_test)
+    runAllModels(X_train,X_test,y_test,y_train)
+    print("Models with info gain")  
+    X_train,X_test=info_gain(X_train,X_test,y_train)
     runAllModels(X_train,X_test,y_test,y_train)
 
     
